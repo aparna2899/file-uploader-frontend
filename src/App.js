@@ -1,5 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import Login from './pages/Login';
+import Home from './pages/Home';
+
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 
@@ -24,6 +26,7 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/login" element={user ? <Navigate to="/" /> : <Login />} />
+        <Route path="/" element={user ? <Home /> : <Navigate to="/login" />} />
       </Routes>
     </BrowserRouter>
   );
