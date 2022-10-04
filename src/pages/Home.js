@@ -1,8 +1,23 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import { async } from 'q';
 
 export default function Home() {
   const [file, setFile] = useState(null);
+  const [list, setList] = useState([]);
+
+  useEffect(() => {
+    const getList = async () => {
+      try {
+        fetch(`http://localhost:3000/file-list`)
+          .then((res) => res.json())
+          .then((res) => setList(res.data));
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    getList();
+  }, []);
   const submitFile = async (event) => {
     event.preventDefault();
     try {
@@ -24,6 +39,11 @@ export default function Home() {
     } catch (error) {
       console.log(error);
     }
+  };
+  const handleDownload = (name) => {
+    fetch(`http://localhost:3000/download/${name.substring(13)}`)
+      .then((res) => res.json())
+      .then((res) => console.log(res.data));
   };
   return (
     <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -48,6 +68,23 @@ export default function Home() {
           </div>
         </form>
       </div>
+      <table className="w-2/3 divide-y divide-gray-300 mt-24 mx-auto">
+        <tbody className="divide-y divide-gray-200 bg-white">
+          {list.map((name) => (
+            <tr key={name} className="bg-gray-50">
+              <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">
+                {name.substring(13)}
+              </td>
+              <td
+                className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 cursor-pointer hover:text-blue-500"
+                onClick={() => handleDownload(name)}
+              >
+                Download
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 }
